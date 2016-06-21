@@ -11,18 +11,27 @@ IP2Location provides some free *lite* versions of their databases that can be do
 ### Making the Databases
 Unzip the each of the zip files. We are going to import the csv files into their own table, but first the tables need to be created.  
 You can just download the createTables.sql file and just run `sqlite3 trogdorable.db < createTables.sql` which will create both tables.   
-Next comes the importing of the csv files. while in the `~` directory  
->```sql 
+Next comes the importing of the csv files. while in the `trogdorable/` directory  
+>``` 
 $sqlite3 trogdorable.db
 sqlite> .separator ",";
 sqlite> .import <location of asn csv file> asn;
 sqlite> .import <location of db11 csv file> db11;
 ```
 
+For optimal query speed we should save off the joined tables into a single table.  While still in sqlite:
+>```
+sqlite>CREATE TABLE asn_db11 AS
+SELECT * FROM asn CROSS JOIN db11
+WHERE asn.startRange == db11.startRange AND
+asn.endRange == db11.endRange;
+```
+This will create a new table called  `asn_db11` that stores all of the joined data. This makes the queries much faster.  
 To check to make sure it all worked you can do:
 > ```
 sqlite> SELECT * FROM asn;
 sqlite> SELECT * FROM db11;
+sqlite> SELECT * FROM asn_db11;
 ```
 
 Both of those should return results but to get the joined results do  
@@ -30,7 +39,7 @@ Both of those should return results but to get the joined results do
 ```
 SELECT * FROM asn, db11 WHERE asn.startRange == db11.startRange and asn.endRange == db11.endRange;
 ```
-Which ultimately gives you everything for matching IP ranges. You can narrow it down using SQL by selecting which city/state or country you want to be in. 
+Which ultimately gives you everything for matching IP ranges. You can narrow it down using SQL by selecting which city,state, or country you want to be in. These results are also now stored in `asn_db11`.				
 
 
 ## Going Further with Python
