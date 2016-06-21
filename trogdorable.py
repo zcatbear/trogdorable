@@ -33,8 +33,7 @@ home = (coord.latitude, coord.longitude)
 cursor = connection.cursor()
 
 
-#The query joins on the start and end range, treating them like composit primary keys
-RadiusQuery = "select asn.cidr, asn.asn, asn.owner, db11.countryCode, db11.region, db11.city, lat, long from asn, db11 WHERE asn.startRange == db11.startRange AND asn.endRange == db11.endRange;"
+RadiusQuery = "select cidr, asn, owner, countryCode, region, city, lat, long from asn_db11;"
 
 #stores the result
 RadiusResult = cursor.execute(RadiusQuery)
